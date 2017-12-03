@@ -1,0 +1,38 @@
+{
+  "name": "quran-pics",
+  "version": "1.0.0",
+  "description": "Generate ayat or part of an ayah as a PNG picture easily",
+  "main": "main.js",
+  "dependencies": {
+    "express": "visionmedia/express",
+    "gm": "aheckmann/gm",
+    "promise": "^8.0.1",
+    "yargs": "^10.0.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "quranpics": "./main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aosaimy/quran-pics.git"
+  },
+  "keywords": [
+    "quran",
+    "pics",
+    "othmani",
+    "font",
+    "fonts",
+    "ayat",
+    "verses"
+  ],
+  "author": "Abdulrahman Alosaimy",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/aosaimy/quran-pics/issues"
+  },
+  "homepage": "https://github.com/aosaimy/quran-pics#readme"
+}
