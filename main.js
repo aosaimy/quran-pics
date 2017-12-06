@@ -15,7 +15,8 @@ class QuranicImageCreater {
         this.font_size = argv.size
         this.verbose = argv.verbose
         this.format = argv.format
-        this.ayah_id = -1
+        this.color = argv.color
+        // this.ayah_id = -1
         this.ayah = null
         this.page = -1
         this.width = 100
@@ -33,31 +34,33 @@ class QuranicImageCreater {
         // this.data = gm(100000, 800, "transparent")
     }
     setAyah(sorah, ayah) {
-        this.ayah_id = ayat.findIndex(x => {
+        var ayah_id = ayat.findIndex(x => {
             return ayah == x.ayahNo && sorah == x.sorahNo;
         })
         if (this.verbose)
-            console.error(this.ayah_id);
-        if (this.ayah_id < 0) {
+            console.error(ayah_id);
+        if (ayah_id < 0) {
             throw new Error("No ayah was found!");
         }
-        this.ayah = ayat[this.ayah_id]
+        this.ayah = ayat[ayah_id]
         this.page = paddy(this.ayah.page, 3);
     }
-    searchAyah(regex) {
-        console.error(regex);
-        this.ayah_id = ayat.findIndex(x => {
+    searchAyah(regex,n) {
+        if (this.verbose)
+            console.error("regex",regex);
+        var results = ayat.filter(x => {
             // console.error(x.string);
             return regex.test(x.string);
         })
-        if (this.verbose)
-            console.error(this.ayah_id);
-        if (this.ayah_id < 0) {
+        // if (this.verbose)
+        //     console.error(results);
+        if (results.length === 0) {
             throw new Error("No ayah was found!");
         }
         else if(this.verbose)
-            console.error("Found:",ayat[this.ayah_id])
-        this.ayah = ayat[this.ayah_id]
+            console.error("Found:",results.length,"ayat.")
+        n = n-1 < results.length ? n -1  : 0
+        this.ayah = results[n]
         this.page = paddy(this.ayah.page, 3);
     }
     getEncodedText(from, to) {
@@ -119,7 +122,7 @@ class QuranicImageCreater {
         var counter = this.counter
         var that = this
         gm(2000 * text.length, 800, "transparent")
-            .fill('#FFFFFF')
+            .fill(this.color)
             .font("./fonts/QCF_P" + this.page + ".TTF", 300)
             .fontSize(300)
             .drawText(this.width, 10, text, "Center")
@@ -128,7 +131,8 @@ class QuranicImageCreater {
             .write("tmp" + this.counter + ".png", err => {
                 if (err)
                     throw err
-                console.error("done writing: tmp" + counter + ".png")
+                if (this.verbose)
+                    console.error("done writing: tmp" + counter + ".png")
                 that.done--
                     if (that.done === 0)
                         that.onDone()
@@ -150,7 +154,8 @@ class QuranicImageCreater {
     // }
     saveToFile(path) {
         this.data.write(path, function(err) { //err, stdout, stderr, command){
-            console.error("done", err);
+            if (this.verbose)
+                console.error("done", err);
             // if(err){ next(err) }
             // else { next(null, raft) };
         });
@@ -197,7 +202,8 @@ if (require.main === module) { // called directly
             })
         }, (argv) => {
             "use strict";
-            console.error(argv);
+            if (this.verbose)
+                console.error("argv:",argv);
             var qic = new QuranicImageCreater(argv);
             var allByPage = {}
             qic.done = argv.ids.length
@@ -221,18 +227,25 @@ if (require.main === module) { // called directly
             })
         }, (argv) => {
             "use strict";
-            console.error(argv);
+            if (this.verbose)
+                console.error("argv:",argv);
             var qic = new QuranicImageCreater(argv);
-            if(argv.w)
-                qic.searchAyah(new RegExp("(\\s|^)"+argv._.slice(1).join(" ")+"(\\s|$)"))
+            try{
+            if(argv.regex)
+                qic.searchAyah(new RegExp(argv.regex),argv.n)
+            else if(argv.w)
+                qic.searchAyah(new RegExp("(\\s|^)"+argv._.slice(1).join(" ")+"(\\s|$)"),argv.n)
             else
-                qic.searchAyah(new RegExp(argv._.slice(1).join(" ")))
+                qic.searchAyah(new RegExp(argv._.slice(1).join(" ")),argv.n)
             qic.done = 1
             qic.drawText(qic.ayah.order, qic.ayah.order + qic.ayah.wordsCount - 1)
+            }catch(e){
+                console.error(e.message)
+            }
         })
         .option('out', {
             alias: 'o',
-            desc: "if set, image will be save to the given path, otherwise it will be output to standard output"
+            desc: "if set, image will be saved to the given path, otherwise it will be outputted to standard output"
         })
         .option('verbose', {
             alias: 'v',
@@ -248,6 +261,11 @@ if (require.main === module) { // called directly
             alias: 'f',
             desc: "the format of the picture.",
             default: "PNG"
+        })
+        .option('color', {
+            alias: 'c',
+            desc: "the color of the text.",
+            default: "#000000"
         })
         .argv
 
