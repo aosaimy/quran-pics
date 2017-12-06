@@ -31,8 +31,9 @@ Options:
 TODO
 
 ### Examples
-`quranpics search محمد -v -f JPEG > tmp.jpeg`
-`quranpics search محمد -v -f JPEG -o tmp.jpeg`
-`quranpics search محمد -v -f JPEG | imgcat`
-`quranpics ayah 10:1 | imgcat`
-`quranpics ayat --ids 10:1 10:2 | imgcat`
+```quranpics search محمد -v -f JPEG > tmp.jpeg```
+```quranpics search محمد -v -f JPEG -o tmp.jpeg```
+```quranpics search محمد -v -f JPEG | imgcat```
+```quranpics ayah 10:1 | imgcat```
+```quranpics ayat --ids 10:1 10:2 | imgcat```
+!(example)[https://github.com/aosaimy/quran-pics/raw/master/docs/img1.png "Search Example"]
